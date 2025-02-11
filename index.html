@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Game BTG</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <script src="utils/Cookie.js"></script>
+  <script src="scenes/MainMenu.js"></script>
+  <script src="scenes/Options.js"></script>
+  <script>
+    class GameScene extends Phaser.Scene {
+      constructor() {
+        super('Game');
+      }
+
+      preload() {
+        this.load.image('background', 'assets/bg.png');
+        this.load.image('player', 'assets/player.png');
+      }
+
+      create() {
+        this.background = this.add.image(0, 0, 'background').setOrigin(0, 0);
+        this.background.displayWidth = this.sys.game.config.width;
+        this.background.displayHeight = this.sys.game.config.height;
+        
+        this.player = this.physics.add.sprite(this.sys.game.config.width / 2, this.sys.game.config.height / 2, 'player').setScale(0.3);
+        this.player.setCollideWorldBounds(true);
+        
+        this.wasd = this.input.keyboard.addKeys({
+          up: Phaser.Input.Keyboard.KeyCodes.W,
+          left: Phaser.Input.Keyboard.KeyCodes.A,
+          down: Phaser.Input.Keyboard.KeyCodes.S,
+          right: Phaser.Input.Keyboard.KeyCodes.D
+        });
+        
+        // Load nos controles salvos
+        const controls = {
+            left: CookieManager.getCookie('control_left') || 'A',
+            right: CookieManager.getCookie('control_right') || 'D',
+            jump: CookieManager.getCookie('control_jump') || 'SPACE'
+        };
+        
+        this.controls = this.input.keyboard.addKeys(controls);
+
+        // Load no volume salvo
+        const volume = parseFloat(CookieManager.getCookie('volume')) || 1;
+        // Aplica o volume
+        // this.sound.volume = volume;
+      }
+
+      update() {
+        if (this.controls.left.isDown) {
+          this.player.setVelocityX(-200);
+        } else if (this.controls.right.isDown) {
+          this.player.setVelocityX(200);
+        } else {
+          this.player.setVelocityX(0);
+        }
+        
+        if (this.controls.jump.isDown && this.player.body.blocked.down) {
+          this.player.setVelocityY(-350);
+        }
+      }
+    }
+
+    const config = {
+      type: Phaser.AUTO,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: { y: 700 },
+          debug: false
+        }
+      },
+      scene: [MainMenu, Options, GameScene]
+    };
+
+    const game = new Phaser.Game(config);
+
+    window.addEventListener('resize', () => {
+      game.scale.resize(window.innerWidth, window.innerHeight);
+      background.displayWidth = window.innerWidth;
+      background.displayHeight = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
