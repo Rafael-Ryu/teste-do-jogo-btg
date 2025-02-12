@@ -8,14 +8,26 @@ class Options extends Phaser.Scene {
             right: CookieManager.getCookie('control_right') || 'D',
             jump: CookieManager.getCookie('control_jump') || 'SPACE'
         };
+        
+        // Aqui muda o Background
+        this.defaultBg = 'bg1';
+        this.bgPath = 'assets/bg.png';
+    }
+
+    preload() {
+        this.load.image(this.defaultBg, this.bgPath);
     }
 
     create() {
-        // Background
-        const bg = this.add.rectangle(0, 0, 
+        this.background = this.add.image(0, 0, this.defaultBg).setOrigin(0, 0);
+        this.background.displayWidth = this.sys.game.config.width;
+        this.background.displayHeight = this.sys.game.config.height;
+
+        // Overlay escuro semi-transparente
+        this.add.rectangle(0, 0, 
             this.sys.game.config.width,
             this.sys.game.config.height,
-            0x000000, 0.8).setOrigin(0, 0);
+            0x000000, 0.7).setOrigin(0, 0);
 
         // Título
         this.add.text(this.sys.game.config.width / 2, 50, 'CONFIGURAÇÕES', {

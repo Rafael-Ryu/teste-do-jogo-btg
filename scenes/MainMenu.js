@@ -39,7 +39,7 @@ class MainMenu extends Phaser.Scene {
         });
 
         playButton.on('pointerdown', () => {
-            this.scene.start('Game');
+            this.scene.start('CharacterName');  // Mudei de 'Game' para 'CharacterName'
         });
 
         optionsButton.on('pointerover', () => {
